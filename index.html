@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מגזין עתיד שמיר | Digital Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> 
@@ -11,6 +11,7 @@
 <header>
     <img src="logo.png" alt="לוגו עתיד שמיר" class="main-logo" />
 </header>
+
 <div class="filter-container">
     <button class="filter-btn active" onclick="filterBy('all')">הכל</button>
     <select class="dropdown-select" onchange="filterBy(this.value)">
@@ -38,15 +39,10 @@
     <div id="main-grid" class="grid"></div>
     <div class="sidebar">
         <div class="widget">
-            <h3>חיפוש כתבות 🔍</h3>
-            <input type="text" id="searchInput" class="sidebar-input" placeholder="חפש לפי כותרת, תוכן או כותב..." oninput="searchArticles()">
-        </div>
-
-        <div class="widget">
             <h3>הרשמה לעדכונים ✉️</h3>
             <form action="https://formspree.io/f/xvzbpddl" method="POST" id="subForm">
-                <input type="email" name="email" id="emailInput" class="sidebar-input" placeholder="האימייל שלך..." required>
-                <button type="submit" style="width:100%; padding:12px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold; margin-top:5px;">הרשמה</button>
+                <input type="email" name="email" id="emailInput" placeholder="האימייל שלך..." required>
+                <button type="submit" style="width:100%; padding:10px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">הרשמה</button>
             </form>
             <p id="subMsg" style="font-size: 0.8rem; color: green; margin-top: 10px; display: none;">נרשמת בהצלחה! 🎉</p>
         </div>
@@ -83,7 +79,6 @@
 
 <script>
     let currentFilter = 'all';
-    let searchQuery = '';
     let isDescending = true;
     let modalMediaList = [];
     let currentModalIndex = 0;
@@ -100,11 +95,6 @@
             }
         }
     };
-
-    function searchArticles() {
-        searchQuery = document.getElementById('searchInput').value.toLowerCase();
-        renderArticles();
-    }
 
     function getMediaList(art) {
         let list = [];
@@ -131,20 +121,14 @@
         if (item.toLowerCase().endsWith('.mp4')) {
             return `<video src="${finalPath}" class="${className}" controls ${!isModal ? 'muted autoplay loop' : ''} preload="none"></video>`;
         }
+        // Lazy Loading מיושם כאן
         return `<img src="${finalPath}" class="${className}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=תמונה+חסרה'">`;
     }
 
     function renderArticles() {
         const grid = document.getElementById('main-grid');
         grid.innerHTML = '';
-        
-        let filtered = articles.filter(a => {
-            const matchesFilter = (currentFilter === 'all' || a.month === currentFilter || a.tag === currentFilter);
-            const matchesSearch = (a.title.toLowerCase().includes(searchQuery) || 
-                                   a.text.toLowerCase().includes(searchQuery) || 
-                                   a.author.toLowerCase().includes(searchQuery));
-            return matchesFilter && matchesSearch;
-        });
+        let filtered = currentFilter === 'all' ? [...articles] : articles.filter(a => a.month === currentFilter || a.tag === currentFilter);
         
         filtered.sort((a, b) => {
             const dateA = new Date(a.date.split('.').reverse().join('-'));
@@ -152,26 +136,26 @@
             return isDescending ? dateB - dateA : dateA - dateB;
         });
 
-        if (filtered.length === 0) {
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; font-size: 1.2rem; color: #888;">לא נמצאו כתבות... 🔍</div>';
-            return;
-        }
-
         filtered.forEach((art) => {
-            const artIndex = articles.indexOf(art);
             const mediaList = getMediaList(art);
+            const artIndexInArray = articles.indexOf(art); 
             const el = document.createElement('div');
             el.className = 'card';
             el.innerHTML = `
-                <div class="card-img-wrapper" onclick="openModal(articles[${artIndex}])">
+                <div class="card-img-wrapper" onclick="openModal(articles[${artIndexInArray}])">
                     <div class="month-badge">${art.month}</div>
                     ${mediaList.length > 1 ? `
-                        <button class="nav-btn prev-btn" onclick="event.stopPropagation(); changeMedia(${artIndex}, 1, this)">❯</button>
-                        <button class="nav-btn next-btn" onclick="event.stopPropagation(); changeMedia(${artIndex}, -1, this)">❮</button>
+                        <button class="nav-btn prev-btn" onclick="event.stopPropagation(); changeMedia(${artIndexInArray}, 1, this)">❯</button>
+                        <button class="nav-btn next-btn" onclick="event.stopPropagation(); changeMedia(${artIndexInArray}, -1, this)">❮</button>
+                        <div class="dots-container" id="dots-${artIndexInArray}">
+                            ${mediaList.map((_, i) => `<div class="dot ${i===0?'active':''}" id="dot-${artIndexInArray}-${i}"></div>`).join('')}
+                        </div>
                     ` : ''}
-                    <div id="media-holder-${artIndex}">${renderMediaItem(mediaList[0])}</div>
+                    <div id="media-holder-${artIndexInArray}" style="width:100%; height:100%;">
+                        ${renderMediaItem(mediaList[0])}
+                    </div>
                 </div>
-                <div class="card-body" onclick="openModal(articles[${artIndex}])">
+                <div class="card-body" onclick="openModal(articles[${artIndexInArray}])">
                     <span style="color:var(--primary); font-size:0.85rem; font-weight:bold;">#${art.tag}</span>
                     <h3>${art.title}</h3>
                     <p>${art.text.substring(0,85)}...</p>
@@ -188,26 +172,34 @@
         const content = document.getElementById('m-content');
         
         content.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-left: 50px; padding-top: 10px;">
-                <h2 style="margin:0; color:var(--dark); font-size:2rem;">${art.title}</h2>
+            <div class="modal-header-area" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-left: 50px; padding-top: 10px;">
+                <h2 style="margin:0; color:var(--dark); font-size:2rem; line-height: 1.2;">${art.title}</h2>
                 <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
                     <span id="share-feedback">הועתק!</span>
                     <button class="share-btn-framed" onclick="shareArticle(${artIndex})">
-                        <span>שתף כתבה</span> 🔗
+                        <span>שתף כתבה</span>
+                        <span>🔗</span>
                     </button>
                 </div>
             </div>
 
             <div class="meta-info">
-                <span>✍️ מאת: ${art.author}</span> | 📅 ${art.date} | 🏷️ ${art.tag}
+                <span>✍️ מאת: ${art.author}</span>
+                <span>📅 תאריך: ${art.date}</span>
+                <span>🏷️ קטגוריה: ${art.tag}</span>
             </div>
 
             <div class="modal-media-wrapper">
                 ${modalMediaList.length > 1 ? `
                     <button class="nav-btn prev-btn" onclick="changeModalMedia(1)">❯</button>
                     <button class="nav-btn next-btn" onclick="changeModalMedia(-1)">❮</button>
+                    <div class="dots-container">
+                        ${modalMediaList.map((_, i) => `<div class="dot ${i===0?'active':''}" id="mdot-${i}"></div>`).join('')}
+                    </div>
                 ` : ''}
-                <div id="modal-media-holder">${renderMediaItem(modalMediaList[0], true)}</div>
+                <div id="modal-media-holder" style="width:100%; height:100%;">
+                    ${renderMediaItem(modalMediaList[0], true)}
+                </div>
             </div>
 
             <div class="article-body">${art.text}</div>
@@ -230,6 +222,8 @@
         }
     }
 
+    // שאר הפונקציות (changeMedia, changeModalMedia, closeModal, filterBy, toggleSort, updateCountdown)
+    // נשארות כפי שהיו בגרסאות הקודמות
     function changeMedia(artIndex, direction, btnEl) {
         const art = articles[artIndex];
         const mediaList = getMediaList(art);
@@ -240,6 +234,9 @@
         if (currentIndex < 0) currentIndex = mediaList.length - 1;
         holder.setAttribute('data-index', currentIndex);
         holder.innerHTML = renderMediaItem(mediaList[currentIndex]);
+        document.querySelectorAll(`#dots-${artIndex} .dot`).forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
     }
 
     function changeModalMedia(direction) {
@@ -247,6 +244,7 @@
         if (currentModalIndex >= modalMediaList.length) currentModalIndex = 0;
         if (currentModalIndex < 0) currentModalIndex = modalMediaList.length - 1;
         document.getElementById('modal-media-holder').innerHTML = renderMediaItem(modalMediaList[currentModalIndex], true);
+        document.querySelectorAll('.modal-media-wrapper .dot').forEach((dot, i) => dot.classList.toggle('active', i === currentModalIndex));
     }
 
     function closeModal() {
