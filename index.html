@@ -13,6 +13,83 @@
     <p class="header-subtitle" id="header-msg"></p>
 </header>
 
+<!-- Mobile Controls (Search + Hamburger) -->
+<div class="mobile-controls">
+    <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="תפריט">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <input type="text" id="mobileSearchInput" class="mobile-search" placeholder="חיפוש..." oninput="searchArticles(this.value)">
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobileMenu" class="mobile-menu">
+    <div class="mobile-menu-content">
+        <button class="close-menu" onclick="toggleMobileMenu()">&times;</button>
+        
+        <div class="mobile-menu-section">
+            <h3>סינון לפי חודש</h3>
+            <select class="dropdown-select mobile-select" onchange="filterBy(this.value); toggleMobileMenu();">
+                <option value="all">כל החודשים</option>
+                <option value="ינואר">ינואר</option>
+                <option value="פברואר">פברואר</option>
+                <option value="מרץ">מרץ</option>
+                <option value="אפריל">אפריל</option>
+                <option value="מאי">מאי</option>
+                <option value="יוני">יוני</option>
+                <option value="יולי">יולי</option>
+                <option value="אוגוסט">אוגוסט</option>
+                <option value="ספטמבר">ספטמבר</option>
+                <option value="אוקטובר">אוקטובר</option>
+                <option value="נובמבר">נובמבר</option>
+                <option value="דצמבר">דצמבר</option>
+            </select>
+        </div>
+
+        <div class="mobile-menu-section">
+            <h3>קטגוריות</h3>
+            <button class="mobile-filter-btn" onclick="filterBy('all'); toggleMobileMenu();">הכל</button>
+            <button class="mobile-filter-btn" onclick="filterBy('מגמות'); toggleMobileMenu();">מגמות</button>
+            <button class="mobile-filter-btn" onclick="filterBy('הנהלה'); toggleMobileMenu();">הנהלה</button>
+            <button class="mobile-filter-btn" onclick="filterBy('צוות'); toggleMobileMenu();">צוות</button>
+            <button class="mobile-filter-btn" onclick="filterBy('PBL'); toggleMobileMenu();">PBL</button>
+            <button class="mobile-filter-btn" onclick="filterBy('לימודים'); toggleMobileMenu();">לימודים</button>
+            <button class="mobile-filter-btn" onclick="filterBy('סיורים וטיולים'); toggleMobileMenu();">סיורים וטיולים</button>
+            <button class="mobile-filter-btn" onclick="filterBy('פעילויות'); toggleMobileMenu();">פעילויות</button>
+            <button class="mobile-filter-btn" onclick="filterBy('הרצאות וטקסים'); toggleMobileMenu();">הרצאות וטקסים</button>
+            <button class="mobile-filter-btn" onclick="filterBy('סיכום מחצית א'); toggleMobileMenu();">סיכום מחצית א'</button>
+        </div>
+
+        <div class="mobile-menu-section">
+            <h3>מיון</h3>
+            <button class="mobile-filter-btn" id="mobileSortBtn" onclick="toggleSort(); updateMobileSortBtn();">מהחדש לישן ⬇️</button>
+        </div>
+
+        <div class="mobile-menu-section">
+            <h3>הרשמה לעדכונים ✉️</h3>
+            <form action="https://formspree.io/f/xvzbpddl" method="POST" id="mobileSubForm">
+                <input type="email" name="email" class="sidebar-input" placeholder="האימייל שלך..." required>
+                <button type="submit" style="width:100%; padding:12px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold; margin-top:8px;">הרשמה</button>
+            </form>
+            <p id="mobileSubMsg" style="font-size: 0.8rem; color: #27ae60; margin-top: 10px; display: none;">נרשמת בהצלחה! 🎉</p>
+        </div>
+
+        <div class="mobile-menu-section">
+            <h3>ספירה לאחור ⏳</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 8px;">ימים לחופשת פורים 2026:</p>
+            <div id="mobileCountdown" style="font-size: 2rem; font-weight: bold; color: var(--primary);">--</div>
+        </div>
+
+        <div class="mobile-menu-section manager-section">
+            <h3>דבר המנהלת ✉️</h3>
+            <p style="font-style: italic; font-size: 0.95rem;">"גאה בכם על מחצית של עשייה וטכנולוגיה. אתם דור העתיד שמצעיד את בית הספר להישגים חסרי תקדים."</p>
+            <div style="text-align: left; font-weight: bold; margin-top: 10px;">- מירב שלום</div>
+        </div>
+    </div>
+</div>
+
+<!-- Desktop Filter Container -->
 <div class="filter-container">
     <button class="filter-btn active" onclick="filterBy('all')">הכל</button>
     <select class="dropdown-select" onchange="filterBy(this.value)">
@@ -41,7 +118,7 @@
     <div class="sidebar">
         <div class="widget">
             <h3>חיפוש כתבות 🔍</h3>
-            <input type="text" id="searchInput" class="sidebar-input" placeholder="חפש לפי כותרת, תוכן או כותב..." oninput="searchArticles()">
+            <input type="text" id="searchInput" class="sidebar-input" placeholder="חפש לפי כותרת, תוכן או כותב..." oninput="searchArticles(this.value)">
         </div>
 
         <div class="widget">
@@ -67,7 +144,7 @@
 
 <div id="articleModal" class="modal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
-        <span onclick="closeModal()" style="position:absolute; left:25px; top:20px; font-size:40px; cursor:pointer; z-index:100;">&times;</span>
+        <span onclick="closeModal()" class="close-modal-btn">&times;</span>
         <div id="m-content"></div>
     </div>
 </div>
@@ -79,17 +156,7 @@
     </div>
 </footer>
 
-     <script src="articles.js"></script>
-<script>
-    // כאן נמצאות הפונקציות renderArticles, openModal וכו'
-    // ודא שכל הפונקציות נמצאות בתוך תגית ה-script הזו
-    window.onload = () => {
-        renderArticles();
-        updateCountdown();
-        // שאר הפונקציות...
-    };
-</script>
-
+<script src="articles.js"></script>
 <script>
     let currentFilter = 'all';
     let searchQuery = '';
@@ -97,7 +164,7 @@
     let modalMediaList = [];
     let currentModalIndex = 0;
     
-     window.onload = () => {
+    window.onload = () => {
         renderArticles();
         updateCountdown();
         
@@ -110,8 +177,20 @@
         }
     };
 
-    function searchArticles() {
-        searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const hamburger = document.querySelector('.hamburger-btn');
+        menu.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
+    }
+
+    function updateMobileSortBtn() {
+        document.getElementById('mobileSortBtn').innerText = isDescending ? "מהחדש לישן ⬇️" : "מהישן לחדש ⬆️";
+    }
+
+    function searchArticles(query) {
+        searchQuery = query.toLowerCase();
         renderArticles();
     }
 
@@ -124,7 +203,7 @@
         return list;
     }
 
-  function renderMediaItem(item, isModal = false) {
+    function renderMediaItem(item, isModal = false) {
         const className = isModal ? 'modal-media-item' : 'card-img';
         if (!item) return '';
 
@@ -143,7 +222,7 @@
         return `<img src="${finalPath}" class="${className}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=תמונה+חסרה'">`;
     }
 
-     function renderArticles() {
+    function renderArticles() {
         const grid = document.getElementById('main-grid');
         grid.innerHTML = '';
         
@@ -165,7 +244,6 @@
             grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; font-size: 1.2rem; color: #888;">לא נמצאו כתבות... 🔍</div>';
             return;
         }
-
 
         filtered.forEach((art) => {
             const mediaList = getMediaList(art);
@@ -209,50 +287,50 @@
         holder.setAttribute('data-index', currentIndex);
         holder.innerHTML = renderMediaItem(mediaList[currentIndex]);
         
-        // עדכון הנקודות בכרטיסייה
         document.querySelectorAll(`#dots-${artIndex} .dot`).forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);
         });
     }
 
     function openModal(art) {
-    modalMediaList = getMediaList(art);
-    currentModalIndex = 0;
-    const artIndex = articles.indexOf(art);
-    const content = document.getElementById('m-content');
-    
-    content.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-left: 50px; padding-top: 10px;">
-            <h2 style="margin:0; color:var(--dark); font-size:2rem;">${art.title}</h2>
-            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
-                <span id="share-feedback">הועתק!</span>
-                <button class="share-btn-framed" onclick="shareArticle(${artIndex})">
-                    <span>שתף כתבה</span> 🔗
-                </button>
+        modalMediaList = getMediaList(art);
+        currentModalIndex = 0;
+        const artIndex = articles.indexOf(art);
+        const content = document.getElementById('m-content');
+        
+        content.innerHTML = `
+            <div class="modal-header-area">
+                <h2 class="modal-title">${art.title}</h2>
+                <div class="modal-share-container">
+                    <span id="share-feedback">הועתק!</span>
+                    <button class="share-btn-framed" onclick="shareArticle(${artIndex})">
+                        <span>שתף</span> 🔗
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <div class="meta-info">
-            <span>✍️ מאת: ${art.author}</span> | 📅 ${art.date} | 🏷️ ${art.tag}
-        </div>
-
-        <div class="modal-media-wrapper">
-            ${modalMediaList.length > 1 ? `
-                <button class="nav-btn prev-btn" onclick="changeModalMedia(1)">❯</button>
-                <button class="nav-btn next-btn" onclick="changeModalMedia(-1)">❮</button>
-            ` : ''}
-            <div id="modal-media-holder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                ${renderMediaItem(modalMediaList[0], true)}
+            <div class="meta-info">
+                <span>✍️ מאת: ${art.author}</span> | 📅 ${art.date} | 🏷️ ${art.tag}
             </div>
-        </div>
 
-        <div class="article-body">${art.text}</div>
-        <div style="clear: both;"></div> `;
-    
-    window.history.pushState(null, null, `#article-${artIndex}`);
-    document.getElementById('articleModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
+            <div class="modal-media-wrapper">
+                ${modalMediaList.length > 1 ? `
+                    <button class="nav-btn prev-btn" onclick="changeModalMedia(1)">❯</button>
+                    <button class="nav-btn next-btn" onclick="changeModalMedia(-1)">❮</button>
+                ` : ''}
+                <div id="modal-media-holder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    ${renderMediaItem(modalMediaList[0], true)}
+                </div>
+            </div>
+
+            <div class="article-body">${art.text}</div>
+            <div style="clear: both;"></div>
+        `;
+        
+        window.history.pushState(null, null, `#article-${artIndex}`);
+        document.getElementById('articleModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
     
     function shareArticle(index) {
         const url = window.location.origin + window.location.pathname + "#article-" + index;
@@ -271,7 +349,6 @@
         if (currentModalIndex >= modalMediaList.length) currentModalIndex = 0;
         if (currentModalIndex < 0) currentModalIndex = modalMediaList.length - 1;
         document.getElementById('modal-media-holder').innerHTML = renderMediaItem(modalMediaList[currentModalIndex], true);
-        document.querySelectorAll('.modal-media-wrapper .dot').forEach((dot, i) => dot.classList.toggle('active', i === currentModalIndex));
     }
 
     function closeModal() {
@@ -287,6 +364,7 @@
     function toggleSort() {
         isDescending = !isDescending;
         document.getElementById('sortBtn').innerText = isDescending ? "מיון: מהחדש לישן" : "מיון: מהישן לחדש";
+        updateMobileSortBtn();
         renderArticles();
     }
 
@@ -297,16 +375,24 @@
         }, 500);
     });
 
+    document.getElementById('mobileSubForm').addEventListener('submit', function(e) {
+        setTimeout(() => {
+            document.getElementById('mobileSubMsg').style.display = 'block';
+            toggleMobileMenu();
+        }, 500);
+    });
+
     function updateCountdown() {
         const target = new Date('March 3, 2026').getTime();
         const now = new Date().getTime();
         const diff = target - now;
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        document.getElementById('countdown').innerText = days > 0 ? days : "חופשה נעימה!";
+        const displayText = days > 0 ? days : "חופשה נעימה!";
+        document.getElementById('countdown').innerText = displayText;
+        document.getElementById('mobileCountdown').innerText = displayText;
     }
 
     updateCountdown();
-    renderArticles();
 </script>
 
 </body>
