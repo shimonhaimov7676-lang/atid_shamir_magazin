@@ -1,7 +1,7 @@
 /* Editor — clean, friendly, Canva-like */
 .editor-body {
     background: linear-gradient(180deg, #fdf6f7 0%, #f0f2f5 100%);
-    min-height: 100vh;
+    min-height: auto;
 }
 .editor-header {
     background: var(--manager-grad);
