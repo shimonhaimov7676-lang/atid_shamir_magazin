@@ -48,10 +48,10 @@ header {
 
 @keyframes backgroundSlideshow {
     0%, 33% { 
-        background-image: linear-gradient(135deg, rgba(163, 29, 49, 0.85), rgba(26, 26, 26, 0.75)), url('img1.jpg');
+        background-image: linear-gradient(135deg, rgba(163, 29, 49, 0.85), rgba(26, 26, 26, 0.75)), url('img3.jpg');
     }
     34%, 66% { 
-        background-image: linear-gradient(135deg, rgba(163, 29, 49, 0.85), rgba(26, 26, 26, 0.75)), url('img2.jpg');
+        background-image: linear-gradient(135deg, rgba(163, 29, 49, 0.85), rgba(26, 26, 26, 0.75)), url('img3.jpg');
     }
     67%, 100% { 
         background-image: linear-gradient(135deg, rgba(163, 29, 49, 0.85), rgba(26, 26, 26, 0.75)), url('img3.jpg');
