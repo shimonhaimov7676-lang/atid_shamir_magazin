@@ -77,13 +77,17 @@
 
         <div class="mobile-menu-section">
             <h3>ספירה לאחור ⏳</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 8px;">ימים לחופשת פורים 2026:</p>
+            <p style="font-size: 0.9rem; margin-bottom: 8px;">ימים לחופשת יום העצמאות 2026:</p>
             <div id="mobileCountdown" style="font-size: 2rem; font-weight: bold; color: var(--primary);">--</div>
         </div>
 
         <div class="mobile-menu-section manager-section">
-            <h3>דבר המנהלת ✉️</h3>
-            <p style="font-style: italic; font-size: 0.95rem;">"גאה בכם על מחצית של עשייה וטכנולוגיה. אתם דור העתיד שמצעיד את בית הספר להישגים חסרי תקדים."</p>
+            <h3>חזון בית ספרי ✉️</h3>
+            <p style="font-style: italic; font-size: 0.95rem;">"קריית החינוך עתיד יצחק שמיר היא קהילה חינוכית הרואה בכל תלמיד למידה אדם שלם, ובונה יסוד כבסיס ללמידה, לצמיחה ולהצלחה.
+
+אנו מטפחים למידה לימוד המבוססת על חקר, ועשייה, ומקדמים סקרנות, חשיבה יצירה ביקורתית, יוזמה ועבודת צוות.
+
+בית הספר שואף להצמיח בוגרים ובוגרות ערכיים, עצמאיים ובעלי יכולות, הפועלים מתוך אחריות ורצון להשפיע על החברה והקהילה."</p>
             <div style="text-align: left; font-weight: bold; margin-top: 10px;">- מירב שלום</div>
         </div>
     </div>
@@ -383,7 +387,7 @@
     });
 
     function updateCountdown() {
-        const target = new Date('March 3, 2026').getTime();
+        const target = new Date('April 22, 2026').getTime();
         const now = new Date().getTime();
         const diff = target - now;
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
