@@ -4,122 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מגזין עתיד שמיר | Digital Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> 
+    <meta name="description" content="המגזין הדיגיטלי של קריית החינוך עתיד יצחק שמיר רמלה — כתבות, פרויקטים והעשייה החינוכית.">
+    <link rel="icon" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header>
-    <img src="logo.png" alt="לוגו עתיד שמיר" class="main-logo" />
-    <p class="header-subtitle" id="header-msg"></p>
+    <div class="header-bg" id="headerBg"></div>
+    <div class="header-inner">
+        <button class="header-arrow" onclick="prevHeaderSlide()" aria-label="הקודם">›</button>
+        <img src="logo.png" alt="לוגו עתיד שמיר" class="main-logo" />
+        <button class="header-arrow" onclick="nextHeaderSlide()" aria-label="הבא">‹</button>
+    </div>
+    <div class="header-dots" id="headerDots"></div>
 </header>
 
-<!-- Mobile Controls (Search + Hamburger) -->
+<!-- Mobile sticky controls -->
 <div class="mobile-controls">
     <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="תפריט">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </button>
-    <input type="text" id="mobileSearchInput" class="mobile-search" placeholder="חיפוש..." oninput="searchArticles(this.value)">
+    <input type="text" class="mobile-search" placeholder="חיפוש כתבות..." oninput="searchArticles(this.value)">
 </div>
 
-<!-- Mobile Menu Overlay -->
+
+<!-- Mobile menu -->
 <div id="mobileMenu" class="mobile-menu">
     <div class="mobile-menu-content">
-        <button class="close-menu" onclick="toggleMobileMenu()">&times;</button>
-        
-        <div class="mobile-menu-section">
-            <h3>סינון לפי חודש</h3>
-            <select class="dropdown-select mobile-select" onchange="filterBy(this.value); toggleMobileMenu();">
-                <option value="all">כל החודשים</option>
-                <option value="ינואר">ינואר</option>
-                <option value="פברואר">פברואר</option>
-                <option value="מרץ">מרץ</option>
-                <option value="אפריל">אפריל</option>
-                <option value="מאי">מאי</option>
-                <option value="יוני">יוני</option>
-                <option value="יולי">יולי</option>
-                <option value="אוגוסט">אוגוסט</option>
-                <option value="ספטמבר">ספטמבר</option>
-                <option value="אוקטובר">אוקטובר</option>
-                <option value="נובמבר">נובמבר</option>
-                <option value="דצמבר">דצמבר</option>
-            </select>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="סגור">&times;</button>
+        <button class="close-menu-arrow" onclick="toggleMobileMenu()" aria-label="סגור תפריט">←</button>
+
+        <div class="menu-logo-bar">
+            <img src="logo.png" alt="לוגו עתיד שמיר">
         </div>
 
         <div class="mobile-menu-section">
+            <h3>סינון לפי חודש</h3>
+            <select class="mobile-select" onchange="filterBy(this.value); toggleMobileMenu();">
+                <option value="all">כל החודשים</option>
+                <option>ינואר</option><option>פברואר</option><option>מרץ</option>
+                <option>אפריל</option><option>מאי</option><option>יוני</option>
+                <option>יולי</option><option>אוגוסט</option><option>ספטמבר</option>
+                <option>אוקטובר</option><option>נובמבר</option><option>דצמבר</option>
+            </select>
+        </div>
+
+        <div class="mobile-menu-section" id="mobileCatList">
             <h3>קטגוריות</h3>
-            <button class="mobile-filter-btn" onclick="filterBy('all'); toggleMobileMenu();">הכל</button>
-            <button class="mobile-filter-btn" onclick="filterBy('מגמות'); toggleMobileMenu();">מגמות</button>
-            <button class="mobile-filter-btn" onclick="filterBy('הנהלה'); toggleMobileMenu();">הנהלה</button>
-            <button class="mobile-filter-btn" onclick="filterBy('צוות'); toggleMobileMenu();">צוות</button>
-            <button class="mobile-filter-btn" onclick="filterBy('PBL'); toggleMobileMenu();">PBL</button>
-            <button class="mobile-filter-btn" onclick="filterBy('לימודים'); toggleMobileMenu();">לימודים</button>
-            <button class="mobile-filter-btn" onclick="filterBy('סיורים וטיולים'); toggleMobileMenu();">סיורים וטיולים</button>
-            <button class="mobile-filter-btn" onclick="filterBy('פעילויות'); toggleMobileMenu();">פעילויות</button>
-            <button class="mobile-filter-btn" onclick="filterBy('הרצאות וטקסים'); toggleMobileMenu();">הרצאות וטקסים</button>
-            <button class="mobile-filter-btn" onclick="filterBy('סיכום מחצית א'); toggleMobileMenu();">סיכום מחצית א'</button>
         </div>
 
         <div class="mobile-menu-section">
             <h3>מיון</h3>
-            <button class="mobile-filter-btn" id="mobileSortBtn" onclick="toggleSort(); updateMobileSortBtn();">מהחדש לישן ⬇️</button>
+            <button class="mobile-filter-btn" id="mobileSortBtn" onclick="toggleSort()">מהחדש לישן ⬇️</button>
         </div>
 
         <div class="mobile-menu-section">
             <h3>הרשמה לעדכונים ✉️</h3>
             <form action="https://formspree.io/f/xvzbpddl" method="POST" id="mobileSubForm">
                 <input type="email" name="email" class="sidebar-input" placeholder="האימייל שלך..." required>
-                <button type="submit" style="width:100%; padding:12px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold; margin-top:8px;">הרשמה</button>
+                <button type="submit">הרשמה</button>
             </form>
-            <p id="mobileSubMsg" style="font-size: 0.8rem; color: #27ae60; margin-top: 10px; display: none;">נרשמת בהצלחה! 🎉</p>
+            <p id="mobileSubMsg" style="font-size:0.85rem; color:#27ae60; margin-top:10px; display:none;">נרשמת בהצלחה! 🎉</p>
         </div>
 
         <div class="mobile-menu-section">
             <h3>ספירה לאחור ⏳</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 8px;">ימים לחופשת יום העצמאות 2026:</p>
-            <div id="mobileCountdown" style="font-size: 2rem; font-weight: bold; color: var(--primary);">--</div>
+            <p style="font-size:0.9rem;">ימים לחופשת יום העצמאות 2026:</p>
+            <div id="mobileCountdown">--</div>
         </div>
 
         <div class="mobile-menu-section manager-section">
-            <h3>חזון בית ספרי ✉️</h3>
-            <p style="font-style: italic; font-size: 0.95rem;">"קריית החינוך עתיד יצחק שמיר היא קהילה חינוכית הרואה בכל תלמיד למידה אדם שלם, ובונה יסוד כבסיס ללמידה, לצמיחה ולהצלחה.
-
-אנו מטפחים למידה לימוד המבוססת על חקר, ועשייה, ומקדמים סקרנות, חשיבה יצירה ביקורתית, יוזמה ועבודת צוות.
-
-בית הספר שואף להצמיח בוגרים ובוגרות ערכיים, עצמאיים ובעלי יכולות, הפועלים מתוך אחריות ורצון להשפיע על החברה והקהילה."</p>
-            <div style="text-align: left; font-weight: bold; margin-top: 10px;">- מירב שלום</div>
+            <h3>חזון בית ספרי</h3>
+            <p style="font-style:italic; font-size:0.95rem; line-height:1.6;">"קריית החינוך עתיד יצחק שמיר היא קהילה חינוכית הרואה בכל תלמיד אדם שלם, ומקדמת למידה מבוססת חקר, יצירה וביקורת — לעבר עתיד של מצוינות והשפעה."</p>
+            <div style="text-align:left; font-weight:bold; margin-top:10px;">- מירב שלום</div>
         </div>
     </div>
 </div>
 
-<!-- Desktop Filter Container -->
-<div class="filter-container">
-    <button class="filter-btn active" onclick="filterBy('all')">הכל</button>
+<!-- Desktop filter bar -->
+<div class="filter-container" id="filterBar">
+    <button class="filter-btn active" data-cat="all" onclick="filterBy('all', this)">הכל</button>
     <select class="dropdown-select" onchange="filterBy(this.value)">
         <option value="all">בחר חודש...</option>
-        <option value="ינואר">ינואר</option><option value="פברואר">פברואר</option>
-        <option value="מרץ">מרץ</option><option value="אפריל">אפריל</option>
-        <option value="מאי">מאי</option><option value="יוני">יוני</option>
-        <option value="יולי">יולי</option><option value="אוגוסט">אוגוסט</option>
-        <option value="ספטמבר">ספטמבר</option><option value="אוקטובר">אוקטובר</option>
-        <option value="נובמבר">נובמבר</option><option value="דצמבר">דצמבר</option>
+        <option>ינואר</option><option>פברואר</option><option>מרץ</option>
+        <option>אפריל</option><option>מאי</option><option>יוני</option>
+        <option>יולי</option><option>אוגוסט</option><option>ספטמבר</option>
+        <option>אוקטובר</option><option>נובמבר</option><option>דצמבר</option>
     </select>
-    <button class="filter-btn" onclick="filterBy('מגמות')">מגמות</button>
-    <button class="filter-btn" onclick="filterBy('הנהלה')">הנהלה</button>
-    <button class="filter-btn" onclick="filterBy('צוות')">צוות</button>
-    <button class="filter-btn" onclick="filterBy('PBL')">PBL</button>
-    <button class="filter-btn" onclick="filterBy('לימודים')">לימודים</button>
-    <button class="filter-btn" onclick="filterBy('סיורים וטיולים')">סיורים וטיולים</button>
-    <button class="filter-btn" onclick="filterBy('פעילויות')">פעילויות</button>
-    <button class="filter-btn" onclick="filterBy('הרצאות וטקסים')">הרצאות וטקסים</button>
-    <button class="filter-btn" onclick="filterBy('סיכום מחצית א')">סיכום מחצית א'</button>
-    <button class="sort-btn" id="sortBtn" onclick="toggleSort()">מיון: מהחדש לישן</button>
+    <span id="desktopCats" class="desktop-cats"></span>
+    <button class="sort-btn" id="sortBtn" onclick="toggleSort()">מיון: מהחדש לישן ⬇️</button>
 </div>
 
 <div class="main-layout">
     <div id="main-grid" class="grid"></div>
-    <div class="sidebar">
+    <aside class="sidebar">
         <div class="widget">
             <h3>חיפוש כתבות 🔍</h3>
             <input type="text" id="searchInput" class="sidebar-input" placeholder="חפש לפי כותרת, תוכן או כותב..." oninput="searchArticles(this.value)">
@@ -128,280 +108,35 @@
         <div class="widget">
             <h3>הרשמה לעדכונים ✉️</h3>
             <form action="https://formspree.io/f/xvzbpddl" method="POST" id="subForm">
-                <input type="email" name="email" id="emailInput" placeholder="האימייל שלך..." required>
-                <button type="submit" style="width:100%; padding:10px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">הרשמה</button>
+                <input type="email" name="email" id="emailInput" class="sidebar-input" placeholder="האימייל שלך..." required>
+                <button type="submit">הרשמה</button>
             </form>
-            <p id="subMsg" style="font-size: 0.8rem; color: green; margin-top: 10px; display: none;">נרשמת בהצלחה! 🎉</p>
+            <p id="subMsg" style="font-size:0.85rem; color:#27ae60; margin-top:10px; display:none;">נרשמת בהצלחה! 🎉</p>
         </div>
+
         <div class="widget">
             <h3>ספירה לאחור ⏳</h3>
-            <p>יימים לחופשת יום העצמאות 2026:</p>
-            <div id="countdown" style="font-size: 2.5rem; font-weight: bold; color: var(--primary);">--</div>
+            <p style="font-size:0.95rem; margin:0 0 8px;">ימים לחופשת יום העצמאות 2026:</p>
+            <div id="countdown">--</div>
         </div>
+
         <div class="widget manager-widget">
-              <h3>חזון בית ספרי ✉️</h3>
-            <p style="font-style: italic; font-size: 0.95rem;">"קריית החינוך עתיד יצחק שמיר היא קהילה חינוכית הרואה בכל תלמיד למידה אדם שלם, ובונה יסוד כבסיס ללמידה, לצמיחה ולהצלחה.
-
-אנו מטפחים למידה לימוד המבוססת על חקר, ועשייה, ומקדמים סקרנות, חשיבה יצירה ביקורתית, יוזמה ועבודת צוות.
-
-בית הספר שואף להצמיח בוגרים ובוגרות ערכיים, עצמאיים ובעלי יכולות, הפועלים מתוך אחריות ורצון להשפיע על החברה והקהילה."</p>
-            <div style="text-align: left; font-weight: bold;">- מירב שלום</div>
+            <h3>חזון בית ספרי</h3>
+            <p style="font-style:italic; font-size:0.95rem; line-height:1.65;">"קריית החינוך עתיד יצחק שמיר היא קהילה חינוכית הרואה בכל תלמיד אדם שלם, ומקדמת למידה מבוססת חקר, יצירה וביקורת — לעבר עתיד של מצוינות והשפעה."</p>
+            <div style="text-align:left; font-weight:bold; margin-top:8px;">- מירב שלום</div>
         </div>
-    </div>
-</div>
-
-<div id="articleModal" class="modal" onclick="if(event.target === this) closeModal()">
-    <div class="modal-content">
-        <span onclick="closeModal()" class="close-modal-btn">&times;</span>
-        <div id="m-content"></div>
-    </div>
+    </aside>
 </div>
 
 <footer>
-    <div class="footer-content">
-        <p style="font-size: 1.2rem; font-weight: 700;">עתיד יצחק שמיר - רמלה</p>
-        <p class="footer-credits">המגזין הדיגיטלי | נערך ועוצב ע"י <span class="footer-name">שמעון חיימוב</span> &copy; 2026</p>
-    </div>
+    <p style="font-size:1.2rem; font-weight:700; margin:0 0 8px;">עתיד יצחק שמיר - רמלה</p>
+    <p class="footer-credits">המגזין הדיגיטלי | נערך ועוצב ע"י <span class="footer-name">שמעון חיימוב</span> &copy; 2026</p>
+    <p style="margin:10px 0 0;"><a href="editor.html" style="color:#fff;opacity:0.85;text-decoration:underline;font-size:0.9rem;">✏️ עורך כתבות (יצירת JSON)</a></p>
 </footer>
 
 <script src="articles.js"></script>
-<script>
-    let currentFilter = 'all';
-    let searchQuery = '';
-    let isDescending = true;
-    let modalMediaList = [];
-    let currentModalIndex = 0;
-    
-    window.onload = () => {
-        renderArticles();
-        updateCountdown();
-        
-        const hash = window.location.hash;
-        if (hash && hash.startsWith('#article-')) {
-            const index = parseInt(hash.split('-')[1]);
-            if (!isNaN(index) && articles[index]) {
-                setTimeout(() => openModal(articles[index]), 500);
-            }
-        }
-    };
-
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobileMenu');
-        const hamburger = document.querySelector('.hamburger-btn');
-        menu.classList.toggle('active');
-        hamburger.classList.toggle('active');
-        document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
-    }
-
-    function updateMobileSortBtn() {
-        document.getElementById('mobileSortBtn').innerText = isDescending ? "מהחדש לישן ⬇️" : "מהישן לחדש ⬆️";
-    }
-
-    function searchArticles(query) {
-        searchQuery = query.toLowerCase();
-        renderArticles();
-    }
-
-    function getMediaList(art) {
-        let list = [];
-        if (art.media) list = [...art.media];
-        else if (art.images) list = [...art.images];
-        else if (art.img) list = [art.img];
-        if (art.youtube) list.push(`yt:${art.youtube}`);
-        return list;
-    }
-
-    function renderMediaItem(item, isModal = false) {
-        const className = isModal ? 'modal-media-item' : 'card-img';
-        if (!item) return '';
-
-        let finalPath = item;
-        if (!item.startsWith('http') && !item.startsWith('yt:') && !item.startsWith('assets/')) {
-            finalPath = `assets/${item}`;
-        }
-
-        if (item.startsWith('yt:')) {
-            let videoId = item.replace('yt:', '');
-            return `<iframe src="https://www.youtube.com/embed/${videoId}" class="${className}" style="border:none;" allowfullscreen></iframe>`;
-        }
-        if (item.toLowerCase().endsWith('.mp4')) {
-            return `<video src="${finalPath}" class="${className}" controls ${!isModal ? 'muted autoplay loop' : ''} preload="none"></video>`;
-        }
-        return `<img src="${finalPath}" class="${className}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=תמונה+חסרה'">`;
-    }
-
-    function renderArticles() {
-        const grid = document.getElementById('main-grid');
-        grid.innerHTML = '';
-        
-        let filtered = articles.filter(a => {
-            const matchesFilter = (currentFilter === 'all' || a.month === currentFilter || a.tag === currentFilter);
-            const matchesSearch = (a.title.toLowerCase().includes(searchQuery) || 
-                                   a.text.toLowerCase().includes(searchQuery) || 
-                                   a.author.toLowerCase().includes(searchQuery));
-            return matchesFilter && matchesSearch;
-        });
-        
-        filtered.sort((a, b) => {
-            const dateA = new Date(a.date.split('.').reverse().join('-'));
-            const dateB = new Date(b.date.split('.').reverse().join('-'));
-            return isDescending ? dateB - dateA : dateA - dateB;
-        });
-
-        if (filtered.length === 0) {
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; font-size: 1.2rem; color: #888;">לא נמצאו כתבות... 🔍</div>';
-            return;
-        }
-
-        filtered.forEach((art) => {
-            const mediaList = getMediaList(art);
-            const artIndexInArray = articles.indexOf(art); 
-            const el = document.createElement('div');
-            el.className = 'card';
-            el.innerHTML = `
-                <div class="card-img-wrapper" onclick="openModal(articles[${artIndexInArray}])">
-                    <div class="month-badge">${art.month}</div>
-                    ${mediaList.length > 1 ? `
-                        <button class="nav-btn prev-btn" onclick="event.stopPropagation(); changeMedia(${artIndexInArray}, 1, this)">❯</button>
-                        <button class="nav-btn next-btn" onclick="event.stopPropagation(); changeMedia(${artIndexInArray}, -1, this)">❮</button>
-                        <div class="dots-container" id="dots-${artIndexInArray}">
-                            ${mediaList.map((_, i) => `<div class="dot ${i===0?'active':''}" id="dot-${artIndexInArray}-${i}"></div>`).join('')}
-                        </div>
-                    ` : ''}
-                    <div id="media-holder-${artIndexInArray}" style="width:100%; height:100%;">
-                        ${renderMediaItem(mediaList[0])}
-                    </div>
-                </div>
-                <div class="card-body" onclick="openModal(articles[${artIndexInArray}])">
-                    <span style="color:var(--primary); font-size:0.85rem; font-weight:bold;">#${art.tag}</span>
-                    <h3>${art.title}</h3>
-                    <p>${art.text.substring(0,85)}...</p>
-                </div>
-            `;
-            grid.appendChild(el);
-        });
-    }
-
-    function changeMedia(artIndex, direction, btnEl) {
-        const art = articles[artIndex];
-        const mediaList = getMediaList(art);
-        const holder = document.getElementById(`media-holder-${artIndex}`);
-        let currentIndex = parseInt(holder.getAttribute('data-index') || 0);
-        
-        currentIndex += direction;
-        if (currentIndex >= mediaList.length) currentIndex = 0;
-        if (currentIndex < 0) currentIndex = mediaList.length - 1;
-        
-        holder.setAttribute('data-index', currentIndex);
-        holder.innerHTML = renderMediaItem(mediaList[currentIndex]);
-        
-        document.querySelectorAll(`#dots-${artIndex} .dot`).forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
-        });
-    }
-
-    function openModal(art) {
-        modalMediaList = getMediaList(art);
-        currentModalIndex = 0;
-        const artIndex = articles.indexOf(art);
-        const content = document.getElementById('m-content');
-        
-        content.innerHTML = `
-            <div class="modal-header-area">
-                <h2 class="modal-title">${art.title}</h2>
-                <div class="modal-share-container">
-                    <span id="share-feedback">הועתק!</span>
-                    <button class="share-btn-framed" onclick="shareArticle(${artIndex})">
-                        <span>שתף</span> 🔗
-                    </button>
-                </div>
-            </div>
-
-            <div class="meta-info">
-                <span>✍️ מאת: ${art.author}</span> | 📅 ${art.date} | 🏷️ ${art.tag}
-            </div>
-
-            <div class="modal-media-wrapper">
-                ${modalMediaList.length > 1 ? `
-                    <button class="nav-btn prev-btn" onclick="changeModalMedia(1)">❯</button>
-                    <button class="nav-btn next-btn" onclick="changeModalMedia(-1)">❮</button>
-                ` : ''}
-                <div id="modal-media-holder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                    ${renderMediaItem(modalMediaList[0], true)}
-                </div>
-            </div>
-
-            <div class="article-body">${art.text}</div>
-            <div style="clear: both;"></div>
-        `;
-        
-        window.history.pushState(null, null, `#article-${artIndex}`);
-        document.getElementById('articleModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function shareArticle(index) {
-        const url = window.location.origin + window.location.pathname + "#article-" + index;
-        navigator.clipboard.writeText(url).then(() => {
-            const fb = document.getElementById('share-feedback');
-            fb.style.display = 'inline';
-            setTimeout(() => fb.style.display = 'none', 2000);
-        });
-        if (navigator.share) {
-            navigator.share({ title: articles[index].title, url: url }).catch(()=>{});
-        }
-    }
-    
-    function changeModalMedia(direction) {
-        currentModalIndex += direction;
-        if (currentModalIndex >= modalMediaList.length) currentModalIndex = 0;
-        if (currentModalIndex < 0) currentModalIndex = modalMediaList.length - 1;
-        document.getElementById('modal-media-holder').innerHTML = renderMediaItem(modalMediaList[currentModalIndex], true);
-    }
-
-    function closeModal() {
-        document.getElementById('articleModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    function filterBy(val) {
-        currentFilter = val;
-        renderArticles();
-    }
-
-    function toggleSort() {
-        isDescending = !isDescending;
-        document.getElementById('sortBtn').innerText = isDescending ? "מיון: מהחדש לישן" : "מיון: מהישן לחדש";
-        updateMobileSortBtn();
-        renderArticles();
-    }
-
-    document.getElementById('subForm').addEventListener('submit', function(e) {
-        setTimeout(() => {
-            document.getElementById('subMsg').style.display = 'block';
-            document.getElementById('emailInput').value = '';
-        }, 500);
-    });
-
-    document.getElementById('mobileSubForm').addEventListener('submit', function(e) {
-        setTimeout(() => {
-            document.getElementById('mobileSubMsg').style.display = 'block';
-            toggleMobileMenu();
-        }, 500);
-    });
-
-    function updateCountdown() {
-        const target = new Date('April 22, 2026').getTime();
-        const now = new Date().getTime();
-        const diff = target - now;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const displayText = days > 0 ? days : "חופשה נעימה!";
-        document.getElementById('countdown').innerText = displayText;
-        document.getElementById('mobileCountdown').innerText = displayText;
-    }
-
-    updateCountdown();
-</script>
-
+<script src="app.js"></script>
+<!-- ווידג'ט יום העצמאות — קובץ עצמאי, ניתן למחוק את שתי השורות הבאות בכל עת -->
+<script src="independence-day.js"></script>
 </body>
 </html>

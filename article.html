@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טוען כתבה... | מגזין עתיד שמיר</title>
+    <link rel="icon" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="article-topbar">
+    <div class="topbar-side right">
+        <span id="share-feedback">הקישור הועתק! ✓</span>
+        <button class="share-btn-framed" onclick="shareArticle()" title="שתף">שתף 🔗</button>
+        <button class="share-btn-framed" onclick="window.print()" title="הדפסה">🖨️</button>
+        <button class="share-btn-framed" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="לראש העמוד">⬆️</button>
+    </div>
+    <a href="index.html" class="topbar-brand" aria-label="עתיד שמיר">
+        <img src="logo.png" alt="לוגו עתיד שמיר">
+    </a>
+    <div class="topbar-side left">
+        <a href="index.html" class="back-btn">→ חזרה למגזין</a>
+    </div>
+</div>
+
+<div class="article-layout">
+    <aside class="related-side related-side-right" id="relatedRight" aria-label="כתבות נוספות"></aside>
+
+    <main id="articleRoot" class="article-container">
+        <div style="text-align:center; padding:60px 20px; color:#888;">טוען כתבה...</div>
+    </main>
+
+    <aside class="related-side related-side-left" id="relatedLeft" aria-label="כתבות נוספות"></aside>
+</div>
+
+<section class="related-mobile" id="relatedMobile" aria-label="כתבות נוספות"></section>
+
+<footer>
+    <p style="font-size:1.2rem; font-weight:700; margin:0 0 8px;">עתיד יצחק שמיר - רמלה</p>
+    <p class="footer-credits">המגזין הדיגיטלי | נערך ועוצב ע"י <span class="footer-name">שמעון חיימוב</span> &copy; 2026</p>
+</footer>
+
+<script src="articles.js"></script>
+<script src="article.js"></script>
+<!-- ווידג'ט יום העצמאות — ניתן למחוק את השורה הבאה בכל עת -->
+<script src="independence-day.js"></script>
+</body>
+</html>
