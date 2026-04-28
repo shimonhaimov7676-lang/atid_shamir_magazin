@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מגזין עתיד שמיר | Digital Edition</title>
     <meta name="description" content="המגזין הדיגיטלי של קריית החינוך עתיד יצחק שמיר רמלה — כתבות, פרויקטים והעשייה החינוכית.">
-    <link rel="icon" href="logo2.png">
+    <link rel="icon" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- ====== TOP SCHOOL NAVBAR (replace # with school site URLs later) ======
+     Square logo placeholder size: 56x56 px (export 112x112 for retina) -->
+<nav class="school-nav" id="schoolNav">
+    <div class="school-nav-inner">
+        <a href="#" class="school-nav-logo" aria-label="לאתר בית הספר">
+            <img src="logo.png" alt="לוגו בית הספר">
+        </a>
+        <ul class="school-nav-links">
+            <li><a href="#"><i class="fa-solid fa-house"></i><span>בית</span></a></li>
+            <li><a href="index.html" class="active"><i class="fa-solid fa-newspaper"></i><span>מגזין</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-users"></i><span>צוות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-circle-info"></i><span>אודות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-graduation-cap"></i><span>מגמות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-list-check"></i><span>תוכניות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-book-open"></i><span>חומרי למידה</span></a></li>
+        </ul>
+        <button class="school-nav-burger" onclick="toggleMobileMenu()" aria-label="תפריט">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+</nav>
 
 <header>
     <div class="header-bg" id="headerBg"></div>
@@ -21,7 +44,7 @@
     <div class="header-dots" id="headerDots"></div>
 </header>
 
-<!-- Mobile sticky controls -->
+<!-- Mobile sticky bar: hamburger + search (school-nav is hidden on mobile) -->
 <div class="mobile-controls">
     <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="תפריט">
         <span></span><span></span><span></span>
@@ -33,15 +56,26 @@
 <!-- Mobile menu -->
 <div id="mobileMenu" class="mobile-menu">
     <div class="mobile-menu-content">
-        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="סגור">&times;</button>
-        <button class="close-menu-arrow" onclick="toggleMobileMenu()" aria-label="סגור תפריט">←</button>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="סגור"><i class="fa-solid fa-xmark"></i></button>
+        <button class="close-menu-arrow" onclick="toggleMobileMenu()" aria-label="סגור תפריט"><i class="fa-solid fa-arrow-left"></i></button>
 
         <div class="menu-logo-bar">
             <img src="logo.png" alt="לוגו עתיד שמיר">
         </div>
 
         <div class="mobile-menu-section">
-            <h3>סינון לפי חודש</h3>
+            <h3><i class="fa-solid fa-compass"></i> ניווט באתר</h3>
+            <a class="mm-link" href="#"><i class="fa-solid fa-house"></i> בית</a>
+            <a class="mm-link active" href="index.html"><i class="fa-solid fa-newspaper"></i> מגזין</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-users"></i> צוות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-circle-info"></i> אודות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-graduation-cap"></i> מגמות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-list-check"></i> תוכניות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-book-open"></i> חומרי למידה</a>
+        </div>
+
+        <div class="mobile-menu-section">
+            <h3><i class="fa-regular fa-calendar"></i> סינון לפי חודש</h3>
             <select class="mobile-select" onchange="filterBy(this.value); toggleMobileMenu();">
                 <option value="all">כל החודשים</option>
                 <option>ינואר</option><option>פברואר</option><option>מרץ</option>
@@ -51,17 +85,18 @@
             </select>
         </div>
 
-        <div class="mobile-menu-section" id="mobileCatList">
-            <h3>קטגוריות</h3>
+        <details class="mobile-menu-section mm-accordion" id="mobileCatList">
+            <summary><span class="mm-sum-text"><i class="fa-solid fa-tags"></i> קטגוריות</span><i class="fa-solid fa-chevron-down mm-chev"></i></summary>
+            <div class="mm-acc-body"></div>
+        </details>
+
+        <div class="mobile-menu-section">
+            <h3><i class="fa-solid fa-arrow-down-wide-short"></i> מיון</h3>
+            <button class="mobile-filter-btn" id="mobileSortBtn" onclick="toggleSort()"><span class="chip-dot"></span>מהחדש לישן <i class="fa-solid fa-arrow-down"></i></button>
         </div>
 
         <div class="mobile-menu-section">
-            <h3>מיון</h3>
-            <button class="mobile-filter-btn" id="mobileSortBtn" onclick="toggleSort()">מהחדש לישן ⬇️</button>
-        </div>
-
-        <div class="mobile-menu-section">
-            <h3>הרשמה לעדכונים ✉️</h3>
+            <h3><i class="fa-regular fa-envelope"></i> הרשמה לעדכונים</h3>
             <form action="https://formspree.io/f/xvzbpddl" method="POST" id="mobileSubForm">
                 <input type="email" name="email" class="sidebar-input" placeholder="האימייל שלך..." required>
                 <button type="submit">הרשמה</button>
@@ -70,7 +105,7 @@
         </div>
 
         <div class="mobile-menu-section">
-            <h3>ספירה לאחור ⏳</h3>
+            <h3><i class="fa-regular fa-clock"></i> ספירה לאחור</h3>
             <p style="font-size:0.9rem;">ימים לחופשת יום העצמאות 2026:</p>
             <div id="mobileCountdown">--</div>
         </div>
@@ -82,10 +117,11 @@
         </div>
     </div>
 </div>
+<div id="mobileMenuBackdrop" class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
 
 <!-- Desktop filter bar -->
 <div class="filter-container" id="filterBar">
-    <button class="filter-btn active" data-cat="all" onclick="filterBy('all', this)">הכל</button>
+    <button class="filter-btn active" data-cat="all" onclick="filterBy('all', this)"><span class="chip-dot"></span>הכל</button>
     <select class="dropdown-select" onchange="filterBy(this.value)">
         <option value="all">בחר חודש...</option>
         <option>ינואר</option><option>פברואר</option><option>מרץ</option>
@@ -93,20 +129,20 @@
         <option>יולי</option><option>אוגוסט</option><option>ספטמבר</option>
         <option>אוקטובר</option><option>נובמבר</option><option>דצמבר</option>
     </select>
-    <span id="desktopCats" class="desktop-cats"></span>
-    <button class="sort-btn" id="sortBtn" onclick="toggleSort()">מיון: מהחדש לישן ⬇️</button>
+    <div id="desktopCats" class="desktop-cats"></div>
+    <button class="sort-btn" id="sortBtn" onclick="toggleSort()"><span class="chip-dot"></span>מיון: מהחדש לישן <i class="fa-solid fa-arrow-down"></i></button>
 </div>
 
 <div class="main-layout">
     <div id="main-grid" class="grid"></div>
     <aside class="sidebar">
         <div class="widget">
-            <h3>חיפוש כתבות 🔍</h3>
+            <h3><i class="fa-solid fa-magnifying-glass"></i> חיפוש כתבות</h3>
             <input type="text" id="searchInput" class="sidebar-input" placeholder="חפש לפי כותרת, תוכן או כותב..." oninput="searchArticles(this.value)">
         </div>
 
         <div class="widget">
-            <h3>הרשמה לעדכונים ✉️</h3>
+            <h3><i class="fa-regular fa-envelope"></i> הרשמה לעדכונים</h3>
             <form action="https://formspree.io/f/xvzbpddl" method="POST" id="subForm">
                 <input type="email" name="email" id="emailInput" class="sidebar-input" placeholder="האימייל שלך..." required>
                 <button type="submit">הרשמה</button>
@@ -115,7 +151,7 @@
         </div>
 
         <div class="widget">
-            <h3>ספירה לאחור ⏳</h3>
+            <h3><i class="fa-regular fa-clock"></i> ספירה לאחור</h3>
             <p style="font-size:0.95rem; margin:0 0 8px;">ימים לחופשת יום העצמאות 2026:</p>
             <div id="countdown">--</div>
         </div>
@@ -131,12 +167,14 @@
 <footer>
     <p style="font-size:1.2rem; font-weight:700; margin:0 0 8px;">עתיד יצחק שמיר - רמלה</p>
     <p class="footer-credits">המגזין הדיגיטלי | נערך ועוצב ע"י <span class="footer-name">שמעון חיימוב</span> &copy; 2026</p>
-    <p style="margin:10px 0 0;"><a href="editor.html" style="color:#fff;opacity:0.85;text-decoration:underline;font-size:0.9rem;">✏️ עורך כתבות (יצירת JSON)</a></p>
+    <p style="margin:10px 0 0;"><a href="editor.html" style="color:#fff;opacity:0.85;text-decoration:underline;font-size:0.9rem;"><i class="fa-solid fa-pen-to-square"></i> עורך כתבות (יצירת JSON)</a></p>
 </footer>
+
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="לראש העמוד">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
 
 <script src="articles.js"></script>
 <script src="app.js"></script>
-<!-- ווידג'ט יום העצמאות — קובץ עצמאי, ניתן למחוק את שתי השורות הבאות בכל עת -->
-<script src="independence-day.js"></script>
 </body>
 </html>

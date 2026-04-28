@@ -6,24 +6,63 @@
     <title>טוען כתבה... | מגזין עתיד שמיר</title>
     <link rel="icon" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="article-topbar">
-    <div class="topbar-side right">
-        <span id="share-feedback">הקישור הועתק! ✓</span>
-        <button class="share-btn-framed" onclick="shareArticle()" title="שתף">שתף 🔗</button>
-        <button class="share-btn-framed" onclick="window.print()" title="הדפסה">🖨️</button>
-        <button class="share-btn-framed" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="לראש העמוד">⬆️</button>
+<!-- ====== TOP SCHOOL NAVBAR (also on article pages) ====== -->
+<nav class="school-nav" id="schoolNav">
+    <div class="school-nav-inner">
+        <a href="#" class="school-nav-logo" aria-label="לאתר בית הספר">
+            <img src="logo.png" alt="לוגו בית הספר">
+        </a>
+        <ul class="school-nav-links">
+            <li><a href="#"><i class="fa-solid fa-house"></i><span>בית</span></a></li>
+            <li><a href="index.html" class="active"><i class="fa-solid fa-newspaper"></i><span>מגזין</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-users"></i><span>צוות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-circle-info"></i><span>אודות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-graduation-cap"></i><span>מגמות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-list-check"></i><span>תוכניות</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-book-open"></i><span>חומרי למידה</span></a></li>
+        </ul>
     </div>
-    <a href="index.html" class="topbar-brand" aria-label="עתיד שמיר">
-        <img src="logo.png" alt="לוגו עתיד שמיר">
-    </a>
-    <div class="topbar-side left">
-        <a href="index.html" class="back-btn">→ חזרה למגזין</a>
+</nav>
+
+<!-- Mobile sticky bar: hamburger only (school-nav is hidden on mobile) -->
+<div class="mobile-controls mobile-controls-article">
+    <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="תפריט">
+        <span></span><span></span><span></span>
+    </button>
+</div>
+
+<!-- Mobile menu -->
+<div id="mobileMenu" class="mobile-menu">
+    <div class="mobile-menu-content">
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="סגור"><i class="fa-solid fa-xmark"></i></button>
+        <button class="close-menu-arrow" onclick="toggleMobileMenu()" aria-label="סגור תפריט"><i class="fa-solid fa-arrow-left"></i></button>
+
+        <div class="mobile-menu-section">
+            <h3><i class="fa-solid fa-compass"></i> ניווט באתר</h3>
+            <a class="mm-link" href="#"><i class="fa-solid fa-house"></i> בית</a>
+            <a class="mm-link active" href="index.html"><i class="fa-solid fa-newspaper"></i> מגזין</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-users"></i> צוות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-circle-info"></i> אודות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-graduation-cap"></i> מגמות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-list-check"></i> תוכניות</a>
+            <a class="mm-link" href="#"><i class="fa-solid fa-book-open"></i> חומרי למידה</a>
+        </div>
     </div>
 </div>
+<div id="mobileMenuBackdrop" class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
+
+<script>
+function toggleMobileMenu() {
+    document.getElementById('mobileMenu')?.classList.toggle('active');
+    document.getElementById('mobileMenuBackdrop')?.classList.toggle('active');
+    document.body.classList.toggle('menu-open');
+}
+</script>
 
 <div class="article-layout">
     <aside class="related-side related-side-right" id="relatedRight" aria-label="כתבות נוספות"></aside>
@@ -42,9 +81,21 @@
     <p class="footer-credits">המגזין הדיגיטלי | נערך ועוצב ע"י <span class="footer-name">שמעון חיימוב</span> &copy; 2026</p>
 </footer>
 
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="לראש העמוד">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script>
+(function(){
+    const btn = document.getElementById('scrollTopBtn');
+    if (!btn) return;
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('show', window.scrollY > 400);
+    }, { passive: true });
+})();
+</script>
+
 <script src="articles.js"></script>
 <script src="article.js"></script>
-<!-- ווידג'ט יום העצמאות — ניתן למחוק את השורה הבאה בכל עת -->
-<script src="independence-day.js"></script>
 </body>
 </html>

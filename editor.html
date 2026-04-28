@@ -6,6 +6,7 @@
 <title>עורך כתבות — עתיד שמיר</title>
 <link rel="icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="editor.css">
 </head>
@@ -13,33 +14,29 @@
 
 <header class="editor-header">
     <div class="editor-header-inner">
-        <a href="index.html" class="editor-back">← חזרה למגזין</a>
+        <a href="index.html" class="editor-back"><i class="fa-solid fa-arrow-right"></i> למגזין</a>
         <div class="editor-title">
             <img src="logo2.png" alt="" class="editor-logo">
-            <div>
-                <h1>עורך הכתבות שלנו</h1>
-                <p>בונים כתבה חדשה בקלות — בלי לגעת בקוד</p>
-            </div>
+            <h1>עורך הכתבות</h1>
         </div>
         <div class="editor-actions-top">
-            <button class="ed-btn ed-btn-ghost" onclick="loadDraft()">📂 טען טיוטה</button>
-            <button class="ed-btn ed-btn-ghost" onclick="saveDraft()">💾 שמור טיוטה</button>
-            <button class="ed-btn ed-btn-primary" onclick="exportJSON()">📤 ייצוא JSON</button>
+            <button class="ed-btn ed-btn-ghost" data-action="load-draft"><i class="fa-solid fa-folder-open"></i> טען</button>
+            <button class="ed-btn ed-btn-ghost" data-action="save-draft"><i class="fa-solid fa-floppy-disk"></i> שמור</button>
+            <button class="ed-btn ed-btn-primary" data-action="export-json"><i class="fa-solid fa-file-export"></i> ייצוא JSON</button>
         </div>
     </div>
 </header>
 
 <main class="editor-main">
-    <!-- LEFT: Form -->
     <section class="editor-form">
         <div class="ed-card">
-            <h2>📝 פרטי הכתבה</h2>
+            <h2><i class="fa-solid fa-pen-to-square"></i> פרטי הכתבה</h2>
             <div class="ed-grid-2">
                 <label>כותרת
-                    <input id="f-title" type="text" placeholder="כותרת הכתבה" oninput="updatePreview()">
+                    <input id="f-title" type="text" placeholder="כותרת הכתבה" data-bind>
                 </label>
                 <label>קטגוריה (תג)
-                    <input id="f-tag" type="text" list="cat-list" placeholder="בחרו מהרשימה או הקלידו חדשה" oninput="updatePreview()">
+                    <input id="f-tag" type="text" list="cat-list" placeholder="בחרו מהרשימה או הקלידו חדשה" data-bind>
                     <datalist id="cat-list">
                         <option value="PBL"></option>
                         <option value="הנהלה"></option>
@@ -51,70 +48,61 @@
                         <option value="פעילויות"></option>
                         <option value="צוות"></option>
                     </datalist>
-                    <small style="font-weight:400;color:#888;font-size:0.78rem;margin-top:4px;">קטגוריות קיימות: PBL · הנהלה · הרצאות וטקסים · לימודים · למידה · מגמות · סיורים וטיולים · פעילויות · צוות</small>
                 </label>
-                <label>חודש
-                    <select id="f-month" onchange="updatePreview()">
-                        <option value="">בחר חודש</option>
-                        <option>ספטמבר</option><option>אוקטובר</option><option>נובמבר</option>
-                        <option>דצמבר</option><option>ינואר</option><option>פברואר</option>
-                        <option>מרץ</option><option>אפריל</option><option>מאי</option><option>יוני</option>
-                    </select>
-                </label>
-                <label>תאריך (DD.MM.YYYY)
-                    <input id="f-date" type="text" placeholder="22.04.2026" oninput="updatePreview()">
+                <label>תאריך
+                    <input id="f-date" type="text" placeholder="DD.MM.YYYY (למשל 22.04.2026)" data-bind>
+                    <small style="font-weight:400;color:#888;font-size:0.78rem;margin-top:4px;">החודש ייקבע אוטומטית מהתאריך</small>
                 </label>
                 <label>שם הכותב/ת
-                    <input id="f-author" type="text" placeholder="שם מלא" oninput="updatePreview()">
+                    <input id="f-author" type="text" placeholder="שם מלא" data-bind>
                 </label>
-                <label>תמונת כיסוי (אופציונלי)
-                    <input id="f-img" type="text" placeholder="my-photo.jpg" oninput="updatePreview()">
+                <label class="span-2">תמונת כיסוי (אופציונלי)
+                    <input id="f-img" type="text" placeholder="my-photo.jpg או URL" data-bind>
                 </label>
             </div>
         </div>
 
         <div class="ed-card">
             <div class="ed-card-head">
-                <h2>🧩 בלוקים של תוכן</h2>
-                <span class="ed-hint">לוחצים על בלוק כדי להוסיף אותו לכתבה ✨</span>
+                <h2><i class="fa-solid fa-puzzle-piece"></i> בלוקים של תוכן</h2>
+                <span class="ed-hint">לוחצים להוספה · גוררים בלוקים כדי לסדר אותם מחדש</span>
             </div>
 
-            <div class="ed-block-picker">
-                <button onclick="addBlock('heading')">📰 כותרת</button>
-                <button onclick="addBlock('paragraph')">📄 פסקה</button>
-                <button onclick="addBlock('image')">🖼️ תמונה</button>
-                <button onclick="addBlock('gallery')">🖼️🖼️ גלריה</button>
-                <button onclick="addBlock('video')">🎬 וידאו</button>
-                <button onclick="addBlock('youtube')">▶️ יוטיוב</button>
-                <button onclick="addBlock('quote')">💬 ציטוט</button>
-                <button onclick="addBlock('list')">📋 רשימה</button>
-                <button onclick="addBlock('table')">📊 טבלה</button>
-                <button onclick="addBlock('link')">🔗 קישור</button>
-                <button onclick="addBlock('file')">📎 קובץ</button>
-                <button onclick="addBlock('calendar')">📅 לוח שנה</button>
-                <button onclick="addBlock('divider')">➖ קו מפריד</button>
+            <div class="ed-block-picker" id="blockPicker">
+                <button data-add="heading"><i class="fa-solid fa-heading"></i> כותרת</button>
+                <button data-add="paragraph"><i class="fa-solid fa-paragraph"></i> פסקה</button>
+                <button data-add="image"><i class="fa-solid fa-image"></i> תמונה</button>
+                <button data-add="gallery"><i class="fa-solid fa-images"></i> גלריה</button>
+                <button data-add="video"><i class="fa-solid fa-film"></i> וידאו</button>
+                <button data-add="youtube"><i class="fa-brands fa-youtube"></i> יוטיוב</button>
+                <button data-add="quote"><i class="fa-solid fa-quote-right"></i> ציטוט</button>
+                <button data-add="list"><i class="fa-solid fa-list-ul"></i> רשימה</button>
+                <button data-add="table"><i class="fa-solid fa-table"></i> טבלה</button>
+                <button data-add="link"><i class="fa-solid fa-link"></i> קישור</button>
+                <button data-add="file"><i class="fa-solid fa-paperclip"></i> קובץ</button>
+                <button data-add="calendar"><i class="fa-regular fa-calendar"></i> לוח שנה</button>
+                <button data-add="divider"><i class="fa-solid fa-minus"></i> קו מפריד</button>
             </div>
 
             <div id="blocks" class="ed-blocks"></div>
-
-            <div class="ed-empty" id="emptyHint">עדיין אין בלוקים — בוחרים מלמעלה ומתחילים לבנות את הכתבה ✨</div>
+            <div class="ed-empty" id="emptyHint">עדיין אין בלוקים — בוחרים מלמעלה ומתחילים לבנות את הכתבה <i class="fa-solid fa-sparkles"></i></div>
         </div>
     </section>
 
-    <!-- RIGHT: Preview + JSON -->
     <aside class="editor-side">
         <div class="ed-card">
             <div class="ed-tabs">
-                <button class="ed-tab active" data-tab="preview" onclick="showTab('preview')">👁️ תצוגה מקדימה</button>
-                <button class="ed-tab" data-tab="json" onclick="showTab('json')">{ } קוד JSON</button>
+                <button class="ed-tab active" data-tab="preview"><i class="fa-regular fa-eye"></i> תצוגה מקדימה</button>
+                <button class="ed-tab" data-tab="json"><i class="fa-solid fa-code"></i> קוד JSON</button>
             </div>
             <div id="tab-preview" class="ed-tab-content active">
                 <div id="preview" class="ed-preview"></div>
+                <p class="ed-hint" style="margin-top:10px;"><i class="fa-solid fa-lightbulb"></i> בתמונות: גוררים את הפינות לשינוי גודל, גוררים את התמונה עצמה כדי להזיז ימינה/אמצע/שמאל.</p>
             </div>
             <div id="tab-json" class="ed-tab-content">
                 <div class="ed-json-actions">
-                    <button class="ed-btn ed-btn-primary" onclick="copyJSON()">📋 העתק</button>
-                    <button class="ed-btn ed-btn-ghost" onclick="downloadJSON()">⬇️ הורד קובץ</button>
+                    <button class="ed-btn ed-btn-primary" data-action="copy-json"><i class="fa-solid fa-copy"></i> העתק</button>
+                    <button class="ed-btn ed-btn-ghost" data-action="download-json"><i class="fa-solid fa-download"></i> הורד קובץ</button>
                 </div>
                 <pre id="jsonOut" class="ed-json"></pre>
                 <p class="ed-hint">מעתיקים את הבלוק שלמעלה ומדביקים אותו בקובץ <code>articles.js</code> בתוך המערך <code>articles</code>. זהו — הכתבה תופיע באתר.</p>

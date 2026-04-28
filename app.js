@@ -40,16 +40,16 @@
     }
 
     function coverThumb(item) {
-        if (!item) return '<div style="width:100%;height:100%;background:linear-gradient(135deg,#A31D31,#6e1422);"></div>';
+        if (!item) return '<div style="width:100%;height:100%;background:#1a1a1a;"></div>';
         if (item.startsWith('yt:')) {
             const id = item.replace('yt:', '');
             return `<img class="card-img" loading="lazy" src="https://img.youtube.com/vi/${id}/hqdefault.jpg" alt="">`;
         }
         const path = resolveAsset(item);
         if (/\.(mp4|webm|mov)$/i.test(item)) {
-            return `<video class="card-img card-video" muted loop playsinline preload="metadata" src="${path}#t=0.1"></video>`;
+            return `<video class="card-img card-video" muted loop playsinline preload="metadata" src="${path}#t=0.1" onerror="this.style.display='none';this.parentElement.style.background='#1a1a1a';"></video>`;
         }
-        return `<img class="card-img" loading="lazy" decoding="async" src="${path}" alt="" onerror="this.style.background='linear-gradient(135deg,#A31D31,#6e1422)';this.removeAttribute('src');">`;
+        return `<img class="card-img" loading="lazy" decoding="async" src="${path}" alt="" onerror="this.style.display='none';this.parentElement.style.background='#1a1a1a';">`;
     }
 
     function getPlainText(art) {
@@ -146,18 +146,19 @@
         // Desktop categories (rendered next to the dropdown)
         const desk = document.getElementById('desktopCats');
         if (desk) {
-            desk.innerHTML = tags.map(t => `<button class="filter-btn" data-cat="${t}">${t}</button>`).join('');
-            desk.querySelectorAll('.filter-btn').forEach(b => {
+            desk.innerHTML = tags.map(t => `<button class="chip" data-cat="${t}"><span class="chip-dot"></span>${t}</button>`).join('');
+            desk.querySelectorAll('.chip').forEach(b => {
                 b.addEventListener('click', () => filterBy(b.dataset.cat, b));
             });
         }
 
-        // Mobile menu vertical list
-        const mob = document.getElementById('mobileCatList');
-        mob.insertAdjacentHTML('beforeend',
-            `<button class="mobile-filter-btn active" data-cat="all" onclick="filterBy('all'); toggleMobileMenu();">הכל</button>` +
-            tags.map(t => `<button class="mobile-filter-btn" data-cat="${t}" onclick="filterBy('${t}'); toggleMobileMenu();">${t}</button>`).join('')
-        );
+        // Mobile menu vertical list (lives inside accordion body)
+        const mob = document.querySelector('#mobileCatList .mm-acc-body');
+        if (mob) {
+            mob.innerHTML =
+                `<button class="mobile-filter-btn active" data-cat="all" onclick="filterBy('all'); toggleMobileMenu();"><span class="chip-dot"></span>הכל</button>` +
+                tags.map(t => `<button class="mobile-filter-btn" data-cat="${t}" onclick="filterBy('${t}'); toggleMobileMenu();"><span class="chip-dot"></span>${t}</button>`).join('');
+        }
     }
 
     // ---------- Render cards ----------
@@ -181,7 +182,7 @@
         });
 
         if (!filtered.length) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;font-size:1.1rem;color:#888;">לא נמצאו כתבות 🔍</div>';
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;font-size:1.1rem;color:#888;"><i class="fa-solid fa-magnifying-glass" style="margin-left:8px;"></i> לא נמצאו כתבות</div>';
             return;
         }
 
@@ -193,8 +194,8 @@
                 ? ml.map((m, i) => `<div class="card-slide${i === 0 ? ' active' : ''}">${coverThumb(m)}</div>`).join('')
                 : `<div class="card-slide active">${coverThumb(null)}</div>`;
             const arrowsHTML = ml.length > 1
-                ? `<button class="card-arrow card-arrow-prev" data-dir="-1" aria-label="הקודם">❯</button>
-                   <button class="card-arrow card-arrow-next" data-dir="1" aria-label="הבא">❮</button>
+                ? `<button class="card-arrow card-arrow-prev" data-dir="-1" aria-label="הקודם"><i class="fa-solid fa-chevron-right"></i></button>
+                   <button class="card-arrow card-arrow-next" data-dir="1" aria-label="הבא"><i class="fa-solid fa-chevron-left"></i></button>
                    <div class="card-dots">${ml.map((_, i) => `<span class="card-dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>`
                 : '';
             return `
@@ -283,21 +284,26 @@
 
     window.toggleSort = function () {
         isDescending = !isDescending;
-        const lbl = isDescending ? 'מיון: מהחדש לישן ⬇️' : 'מיון: מהישן לחדש ⬆️';
-        const lblM = isDescending ? 'מהחדש לישן ⬇️' : 'מהישן לחדש ⬆️';
+        const arrow = isDescending
+            ? '<i class="fa-solid fa-arrow-down"></i>'
+            : '<i class="fa-solid fa-arrow-up"></i>';
+        const lbl = (isDescending ? 'מיון: מהחדש לישן ' : 'מיון: מהישן לחדש ') + arrow;
+        const lblM = (isDescending ? 'מהחדש לישן ' : 'מהישן לחדש ') + arrow;
         const a = document.getElementById('sortBtn');
         const b = document.getElementById('mobileSortBtn');
-        if (a) a.innerText = lbl;
-        if (b) b.innerText = lblM;
+        if (a) a.innerHTML = lbl;
+        if (b) b.innerHTML = lblM;
         renderArticles();
     };
 
     window.toggleMobileMenu = function () {
         const menu = document.getElementById('mobileMenu');
-        const ham = document.querySelector('.hamburger-btn');
-        menu.classList.toggle('active');
-        ham.classList.toggle('active');
-        document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        const ham = document.querySelector('.school-nav-burger') || document.querySelector('.hamburger-btn');
+        const backdrop = document.getElementById('mobileMenuBackdrop');
+        const isOpen = menu.classList.toggle('active');
+        if (ham) ham.classList.toggle('active', isOpen);
+        if (backdrop) backdrop.classList.toggle('active', isOpen);
+        document.body.style.overflow = isOpen ? 'hidden' : '';
     };
 
     // ---------- Countdown ----------
@@ -327,6 +333,15 @@
         });
     }
 
+    // ---------- Scroll-to-top button ----------
+    function bindScrollTop() {
+        const btn = document.getElementById('scrollTopBtn');
+        if (!btn) return;
+        window.addEventListener('scroll', () => {
+            btn.classList.toggle('show', window.scrollY > 400);
+        }, { passive: true });
+    }
+
     // ---------- Init ----------
     document.addEventListener('DOMContentLoaded', () => {
         buildHeader();
@@ -334,5 +349,6 @@
         renderArticles();
         updateCountdown();
         bindForms();
+        bindScrollTop();
     });
 })();

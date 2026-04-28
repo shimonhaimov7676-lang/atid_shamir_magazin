@@ -73,8 +73,8 @@
             ? `<div class="dots-container">${items.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" data-i="${i}"></div>`).join('')}</div>`
             : '';
         const arrows = items.length > 1
-            ? `<button class="nav-btn next-btn" data-dir="-1" aria-label="הקודם">❮</button>
-               <button class="nav-btn prev-btn" data-dir="1" aria-label="הבא">❯</button>`
+            ? `<button class="nav-btn prev-btn" data-dir="-1" aria-label="הקודם"><i class="fa-solid fa-chevron-right"></i></button>
+               <button class="nav-btn next-btn" data-dir="1" aria-label="הבא"><i class="fa-solid fa-chevron-left"></i></button>`
             : '';
 
         return `<div class="gallery" id="gallery">
@@ -91,8 +91,8 @@
 
         function go(i) {
             idx = (i + count) % count;
-            // RTL: index 0 is rightmost; translateX positive moves the track right
-            track.style.transform = `translateX(${idx * 100}%)`;
+            // RTL flex: tracking moves to the LEFT (negative) to reveal next slide
+            track.style.transform = `translateX(${-idx * 100}%)`;
             dots.forEach((d, j) => d.classList.toggle('active', j === idx));
         }
 
@@ -115,8 +115,7 @@
             currentX = (e.touches ? e.touches[0].clientX : e.clientX);
             const dx = currentX - startX;
             const pct = (dx / gallery.offsetWidth) * 100;
-            // RTL inverted: dragging right = previous slide
-            track.style.transform = `translateX(${idx * 100 - pct}%)`;
+            track.style.transform = `translateX(${-idx * 100 + pct}%)`;
         }
         function onEnd() {
             if (!dragging) return;
@@ -124,7 +123,8 @@
             track.style.transition = '';
             const dx = currentX - startX;
             if (Math.abs(dx) > 50) {
-                go(dx > 0 ? idx - 1 : idx + 1); // RTL flip
+                // RTL: swipe right (dx>0) = previous, swipe left = next
+                go(dx > 0 ? idx - 1 : idx + 1);
             } else {
                 go(idx);
             }
@@ -134,7 +134,7 @@
         gallery.addEventListener('touchmove', onMove, { passive: true });
         gallery.addEventListener('touchend', onEnd);
 
-        // Keyboard
+        // Keyboard (RTL: ArrowRight = previous, ArrowLeft = next)
         document.addEventListener('keydown', e => {
             if (e.key === 'ArrowRight') go(idx - 1);
             if (e.key === 'ArrowLeft') go(idx + 1);
@@ -151,22 +151,43 @@
             case 'heading':
             case 'h2':
             case 'h3':
-                return `<h2 class="block-heading">${escapeHTML(b.text || b.content || '')}</h2>`;
+            case 'h4': {
+                const lvl = ['h2','h3','h4'].includes(b.level) ? b.level
+                          : (t === 'h3' ? 'h3' : (t === 'h4' ? 'h4' : 'h2'));
+                return `<${lvl} class="block-heading">${escapeHTML(b.text || b.content || '')}</${lvl}>`;
+            }
             case 'quote':
-                return `<blockquote class="block-quote">${formatInline(b.text || b.content || '')}${b.author ? `<div style="margin-top:10px;font-weight:bold;font-style:normal;color:var(--primary);">— ${escapeHTML(b.author)}</div>` : ''}</blockquote>`;
-            case 'image':
-                return `<figure class="block-image">
-                    <img src="${resolveAsset(b.src)}" loading="lazy" decoding="async" alt="${escapeHTML(b.alt || '')}">
+                return `<blockquote class="block-quote">${formatInline(b.text || b.content || '')}${b.author || b.cite ? `<div style="margin-top:10px;font-weight:bold;font-style:normal;color:var(--primary);">— ${escapeHTML(b.author || b.cite)}</div>` : ''}</blockquote>`;
+            case 'image': {
+                const w = b.width && b.width < 100 ? b.width : null;
+                const align = b.align || 'center';
+                const wrap = b.wrap && w;
+                const styles = [];
+                if (w) styles.push(`width:${w}%`);
+                const cls = ['block-image'];
+                if (wrap) cls.push('wrapped', 'align-' + align);
+                else if (w) cls.push('align-' + align);
+                return `<figure class="${cls.join(' ')}" style="${styles.join(';')}">
+                    <img src="${resolveAsset(b.src)}" loading="lazy" decoding="async" alt="${escapeHTML(b.alt || b.caption || '')}">
                     ${b.caption ? `<figcaption>${escapeHTML(b.caption)}</figcaption>` : ''}
                 </figure>`;
+            }
+            case 'gallery': {
+                const items = (b.images || []).map(resolveAsset);
+                if (!items.length) return '';
+                if (b.mode === 'grid') {
+                    return `<div class="block-gallery-grid">${items.map(src => `<img src="${src}" loading="lazy" alt="">`).join('')}</div>`;
+                }
+                return buildGallery(b.images || []);
+            }
             case 'video':
-                return `<div class="block-video"><video src="${resolveAsset(b.src)}" controls preload="metadata" playsinline></video></div>`;
+                return `<div class="block-video"><video src="${resolveAsset(b.src)}" controls preload="metadata" playsinline ${b.poster?`poster="${resolveAsset(b.poster)}"`:''}></video></div>`;
             case 'youtube':
                 return `<div class="block-video" style="aspect-ratio:16/9;"><iframe src="https://www.youtube.com/embed/${b.id}" allowfullscreen loading="lazy" style="width:100%;height:100%;"></iframe></div>`;
             case 'list': {
                 const items = (b.items || []).map(i => `<li>${formatInline(i)}</li>`).join('');
-                const cls = b.ordered ? 'ordered' : 'unordered';
-                const tag = b.ordered ? 'ol' : 'ul';
+                const cls = b.ordered || b.style === 'ol' ? 'ordered' : 'unordered';
+                const tag = b.ordered || b.style === 'ol' ? 'ol' : 'ul';
                 return `<${tag} class="block-list ${cls}">${items}</${tag}>`;
             }
             case 'table': {
@@ -177,14 +198,27 @@
             case 'link':
                 return `<a class="block-link-card" href="${escapeHTML(b.url)}" target="_blank" rel="noopener">
                     <span class="icon">${b.icon || '🔗'}</span>
-                    <span class="lc-text"><strong>${escapeHTML(b.title || b.url)}</strong>${b.description ? `<span>${escapeHTML(b.description)}</span>` : ''}</span>
+                    <span class="lc-text"><strong>${escapeHTML(b.text || b.title || b.url)}</strong>${b.description ? `<span>${escapeHTML(b.description)}</span>` : ''}</span>
                 </a>`;
             case 'file':
-                return `<a class="block-file" href="${escapeHTML(b.url)}" target="_blank" rel="noopener" download>
-                    📎 ${escapeHTML(b.label || 'הורדת קובץ')}
+                return `<a class="block-file" href="${resolveAsset(b.src || b.url)}" target="_blank" rel="noopener" download>
+                    📎 ${escapeHTML(b.name || b.label || 'הורדת קובץ')}
                 </a>`;
-            case 'calendar':
-                return `<div class="block-calendar"><iframe src="${escapeHTML(b.src)}" loading="lazy"></iframe></div>`;
+            case 'calendar': {
+                if (b.mode === 'google' && b.src) {
+                    return `<div class="block-calendar">
+                        ${b.title ? `<h3 style="margin:0 0 10px;color:var(--primary);">${escapeHTML(b.title)}</h3>` : ''}
+                        <iframe src="${escapeHTML(b.src)}" loading="lazy" style="width:100%;height:500px;border:0;border-radius:12px;"></iframe>
+                    </div>`;
+                }
+                if (b.events && b.events.length) {
+                    return `<div class="block-calendar-list">
+                        ${b.title ? `<h3 style="margin:0 0 10px;color:var(--primary);">${escapeHTML(b.title)}</h3>` : ''}
+                        <ul>${b.events.map(e => `<li><b>${escapeHTML(e.date)}</b> — ${escapeHTML(e.text)}</li>`).join('')}</ul>
+                    </div>`;
+                }
+                return '';
+            }
             case 'embed':
                 return `<div class="block-video" style="aspect-ratio:16/9;"><iframe src="${escapeHTML(b.src)}" allowfullscreen loading="lazy" style="width:100%;height:100%;"></iframe></div>`;
             case 'divider':
@@ -229,10 +263,15 @@
     root.innerHTML = `
         <h1 class="article-title">${escapeHTML(art.title)}</h1>
         <div class="meta-info">
-            <span>✍️ ${escapeHTML(art.author || '')}</span>
-            <span>📅 ${escapeHTML(art.date || '')}</span>
-            <span>🏷️ ${escapeHTML(art.tag || '')}</span>
-            <span>📅 ${escapeHTML(art.month || '')}</span>
+            <span><i class="fa-solid fa-user-pen"></i> ${escapeHTML(art.author || '')}</span>
+            <span><i class="fa-regular fa-calendar"></i> ${escapeHTML(art.date || '')}</span>
+            <span><i class="fa-solid fa-tag"></i> ${escapeHTML(art.tag || '')}</span>
+            <span><i class="fa-regular fa-calendar-days"></i> ${escapeHTML(art.month || '')}</span>
+            <span class="meta-actions">
+                <button class="art-act-btn" onclick="shareArticle()" title="שתף"><i class="fa-solid fa-share-nodes"></i> שתף</button>
+                <button class="art-act-btn" onclick="window.print()" title="הדפסה"><i class="fa-solid fa-print"></i> הדפסה</button>
+                <span id="share-feedback-inline" class="art-act-feedback">הקישור הועתק! <i class="fa-solid fa-check"></i></span>
+            </span>
         </div>
         ${bodyHTML}
     `;
@@ -309,8 +348,9 @@
     // ---------- Share ----------
     window.shareArticle = function () {
         const url = location.href;
-        const fb = document.getElementById('share-feedback');
+        const fb = document.getElementById('share-feedback-inline') || document.getElementById('share-feedback');
         const done = () => {
+            if (!fb) return;
             fb.classList.add('show');
             setTimeout(() => fb.classList.remove('show'), 2000);
         };
